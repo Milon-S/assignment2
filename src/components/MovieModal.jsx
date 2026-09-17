@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, Star, Calendar, Globe, Tv, Film } from 'lucide-react';
 
-/**
- * MovieModal Component
- * 
- */
 export default function MovieModal({ show, onClose }) {
   if (!show) return null;
 

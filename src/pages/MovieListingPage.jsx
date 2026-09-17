@@ -4,13 +4,8 @@ import MovieCard from '../components/MovieCard';
 import { fetchTopShows, searchShows } from '../services/api';
 import { Filter, Frown } from 'lucide-react';
 
-/**
- * MovieListingPage Component
- * Full movie catalog page with live TVMaze search, genre filter pills, and responsive movie cards grid.
- */
-export default function MovieListingPage({ onSelectMovie }) {
+export default function MovieListingPage({ searchQuery = '', setSearchQuery = () => {}, onSelectMovie }) {
   const [movies, setMovies] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,6 +43,8 @@ export default function MovieListingPage({ onSelectMovie }) {
     };
   }, [searchQuery]);
 
+  const [sortBy, setSortBy] = useState('default');
+
   // Extract unique genres for quick filter pills
   const availableGenres = useMemo(() => {
     const genreSet = new Set();
@@ -59,13 +56,32 @@ export default function MovieListingPage({ onSelectMovie }) {
     return ['All', ...Array.from(genreSet).sort()];
   }, [movies]);
 
-  // Filter movies by selected genre
+  // Filter and sort movies by selected genre & criteria
   const filteredMovies = useMemo(() => {
-    if (selectedGenre === 'All') return movies;
-    return movies.filter(movie => 
-      Array.isArray(movie.genres) && movie.genres.includes(selectedGenre)
-    );
-  }, [movies, selectedGenre]);
+    let result = movies;
+    if (selectedGenre !== 'All') {
+      result = result.filter(movie => 
+        Array.isArray(movie.genres) && movie.genres.includes(selectedGenre)
+      );
+    }
+
+    return [...result].sort((a, b) => {
+      if (sortBy === 'rating') {
+        const ratingA = a.rating?.average || 0;
+        const ratingB = b.rating?.average || 0;
+        return ratingB - ratingA;
+      }
+      if (sortBy === 'year') {
+        const yearA = parseInt(a.premiered?.split('-')[0], 10) || 0;
+        const yearB = parseInt(b.premiered?.split('-')[0], 10) || 0;
+        return yearB - yearA;
+      }
+      if (sortBy === 'name') {
+        return (a.name || '').localeCompare(b.name || '');
+      }
+      return 0;
+    });
+  }, [movies, selectedGenre, sortBy]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
@@ -101,14 +117,34 @@ export default function MovieListingPage({ onSelectMovie }) {
         </div>
       )}
 
-      {/* Title & Total Count Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-white">
-          {searchQuery ? `Search Results for "${searchQuery}"` : 'All Movies & TV Shows'}
-        </h2>
-        <span className="text-slate-400 text-sm">
-          {filteredMovies.length} {filteredMovies.length === 1 ? 'title' : 'titles'} found
-        </span>
+      {/* Title, Total Count & Sort Options Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">
+            {searchQuery ? `Search Results for "${searchQuery}"` : 'All Movies & TV Shows'}
+          </h2>
+          <span className="text-slate-400 text-xs sm:text-sm">
+            {filteredMovies.length} {filteredMovies.length === 1 ? 'title' : 'titles'} found
+          </span>
+        </div>
+
+        {/* Sort Select */}
+        <div className="flex items-center gap-2">
+          <label htmlFor="sort-select" className="text-xs text-slate-400 font-medium whitespace-nowrap">
+            Sort by:
+          </label>
+          <select
+            id="sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-[#131b2e] text-slate-200 border border-white/15 text-xs sm:text-sm rounded-xl px-3 py-2 outline-none focus:border-amber-500 transition-colors cursor-pointer"
+          >
+            <option value="default">Default / Relevance</option>
+            <option value="rating">Highest Rated</option>
+            <option value="year">Newest Release</option>
+            <option value="name">Title (A - Z)</option>
+          </select>
+        </div>
       </div>
 
       {/* Loading State */}

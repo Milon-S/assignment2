@@ -4,10 +4,6 @@ import MovieCard from '../components/MovieCard';
 import { fetchTopShows } from '../services/api';
 import { Compass, Flame } from 'lucide-react';
 
-/**
- * HomePage Component
- * Landing page featuring hero banner and trending movie cards grid preview.
- */
 export default function HomePage({ onNavigate, onSelectMovie }) {
   const [featuredMovies, setFeaturedMovies] = useState([]);
   const [loading, setLoading] = useState(true);

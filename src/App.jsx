@@ -5,17 +5,21 @@ import HomePage from './pages/HomePage';
 import MovieListingPage from './pages/MovieListingPage';
 import MovieModal from './components/MovieModal';
 
-/**
- * Main Application Component
- * Controls view navigation state and movie modal overlay.
- */
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home'); // 'home' | 'listing'
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleNavigate = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    if (currentPage !== 'listing') {
+      setCurrentPage('listing');
+    }
   };
 
   const handleSelectMovie = (movie) => {
@@ -29,7 +33,12 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-[#0b0f19] text-slate-100 font-sans">
       {/* Top Sticky Navbar */}
-      <Navbar currentPage={currentPage} onNavigate={handleNavigate} />
+      <Navbar 
+        currentPage={currentPage} 
+        onNavigate={handleNavigate}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+      />
 
       {/* Main Page Area */}
       <main className="flex-1">
@@ -40,6 +49,8 @@ export default function App() {
           />
         ) : (
           <MovieListingPage 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
             onSelectMovie={handleSelectMovie} 
           />
         )}
@@ -54,7 +65,7 @@ export default function App() {
       )}
 
       {/* Global Footer */}
-      <Footer />
+      <Footer onNavigate={handleNavigate} />
     </div>
   );
 }

@@ -1,10 +1,6 @@
 import React from 'react';
 import { Star, Calendar, Info, Film } from 'lucide-react';
 
-/**
- * MovieCard Component
-
- */
 export default function MovieCard({ show, onSelect }) {
   // Extract details with fallback defaults
   const title = show?.name || 'Untitled Movie';

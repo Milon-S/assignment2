@@ -1,10 +1,6 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
 
-/**
- * SearchBar Component
- * Live search input with clear icon and smooth focus highlights.
- */
 export default function SearchBar({ searchQuery, setSearchQuery, placeholder = "Search for a movie..." }) {
   return (
     <div className="py-6 w-full">

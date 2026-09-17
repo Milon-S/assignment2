@@ -1,10 +1,6 @@
 import React from 'react';
 import { ArrowRight, Clapperboard, Film, Star, Zap } from 'lucide-react';
 
-/**
- * HeroBanner Component
-
- */
 export default function HeroBanner({ onExplore }) {
   return (
     <section className="relative py-24 px-4 sm:px-6 overflow-hidden border-b border-white/10 bg-[#0b0f19]">
