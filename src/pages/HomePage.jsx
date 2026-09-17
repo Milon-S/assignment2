@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import HeroBanner from '../components/HeroBanner';
 import MovieCard from '../components/MovieCard';
 import { fetchTopShows } from '../services/api';
-import { Compass, Sparkles } from 'lucide-react';
+import { Compass, Flame } from 'lucide-react';
 
 /**
  * HomePage Component
@@ -36,7 +36,7 @@ export default function HomePage({ onNavigate, onSelectMovie }) {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
-              <Sparkles size={16} />
+              <Flame size={16} className="text-amber-400 fill-amber-400/20" />
               <span>TRENDING NOW</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white">

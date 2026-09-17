@@ -3,7 +3,7 @@ import { X, Star, Calendar, Globe, Tv, Film } from 'lucide-react';
 
 /**
  * MovieModal Component
- * Interactive overlay modal displaying details for a selected movie or TV show.
+ * 
  */
 export default function MovieModal({ show, onClose }) {
   if (!show) return null;
@@ -32,18 +32,18 @@ export default function MovieModal({ show, onClose }) {
   const network = show?.network?.name || show?.webChannel?.name || 'N/A';
 
   return (
-    <div 
+    <div
       className="fixed inset-0 w-full h-full bg-slate-950/85 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6 animate-fade-in"
       onClick={onClose}
     >
       {/* Modal Dialog Box */}
-      <div 
+      <div
         className="relative bg-[#151d30] border border-white/15 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/80 animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Floating Close Button */}
-        <button 
-          className="absolute top-4 right-4 z-20 bg-[#0b0f19]/75 border border-white/15 text-white w-9 h-9 rounded-full flex items-center justify-center cursor-pointer hover:bg-rose-500 hover:border-rose-500 hover:rotate-90 transition-all duration-200" 
+        <button
+          className="absolute top-4 right-4 z-20 bg-[#0b0f19]/75 border border-white/15 text-white w-9 h-9 rounded-full flex items-center justify-center cursor-pointer hover:bg-rose-500 hover:border-rose-500 hover:rotate-90 transition-all duration-200"
           onClick={onClose}
           title="Close Modal (Esc)"
         >
@@ -62,7 +62,7 @@ export default function MovieModal({ show, onClose }) {
 
         {/* Modal Inner Content */}
         <div className="p-6 sm:p-8 relative -mt-16 sm:-mt-20">
-          
+
           {/* Header Block: Poster Thumbnail + Title & Genres */}
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-end mb-6">
             {poster ? (
@@ -72,10 +72,10 @@ export default function MovieModal({ show, onClose }) {
                 <Film size={36} className="text-slate-500" />
               </div>
             )}
-            
+
             <div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">{title}</h2>
-              
+
               {/* Genre Pills */}
               {genres.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -125,9 +125,9 @@ export default function MovieModal({ show, onClose }) {
           <div>
             <h3 className="text-lg font-bold text-white mb-3">Overview</h3>
             {show?.summary ? (
-              <div 
+              <div
                 className="text-slate-300 text-sm sm:text-base leading-relaxed space-y-3 [&_p]:mb-3"
-                dangerouslySetInnerHTML={{ __html: show.summary }} 
+                dangerouslySetInnerHTML={{ __html: show.summary }}
               />
             ) : (
               <p className="text-slate-400 text-sm">No summary description available for this title.</p>
@@ -136,7 +136,7 @@ export default function MovieModal({ show, onClose }) {
 
           {/* Modal Footer Action */}
           <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-end">
-            <button 
+            <button
               type="button"
               className="px-5 py-2.5 rounded-full font-semibold text-sm bg-white/5 text-slate-300 border border-white/15 hover:bg-rose-500/15 hover:border-rose-500/40 hover:text-rose-400 transition-all duration-200 flex items-center gap-2 cursor-pointer"
               onClick={onClose}
