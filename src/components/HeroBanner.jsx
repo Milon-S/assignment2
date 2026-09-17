@@ -8,7 +8,7 @@ export default function HeroBanner({ onExplore }) {
       {/* Cinematic Movie Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60 filter brightness-110 contrast-105 scale-105 transform transition-transform duration-1000 ease-out"
-        style={{ backgroundImage: `url('/hero-bg.jpg')` }}
+        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
       />
 
       {/* Balanced Vignette & Gradient Overlays for Text Readability & Image Clarity */}
