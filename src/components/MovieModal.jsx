@@ -21,7 +21,7 @@ export default function MovieModal({ show, onClose }) {
   const title = show?.name || 'Untitled Show';
   const poster = show?.image?.original || show?.image?.medium;
   const backdrop = show?.image?.original || show?.image?.medium;
-  const rating = show?.rating?.average ? show.rating.average.toFixed(1) : 'N/A';
+  const rating = typeof show?.rating?.average === 'number' ? show.rating.average.toFixed(1) : 'N/A';
   const releaseDate = show?.premiered || 'N/A';
   const genres = show?.genres || [];
   const language = show?.language || 'N/A';

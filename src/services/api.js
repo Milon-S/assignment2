@@ -25,7 +25,7 @@ export async function searchShows(query) {
       throw new Error(`Search error: ${response.status}`);
     }
     const rawData = await response.json();
-    return rawData.map(item => item.show);
+    return rawData.map(item => item?.show).filter(Boolean);
   } catch (error) {
     console.error(`Error searching shows for "${query}":`, error);
     throw error;

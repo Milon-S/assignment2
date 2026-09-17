@@ -5,7 +5,7 @@ export default function MovieCard({ show, onSelect }) {
   // Extract details with fallback defaults
   const title = show?.name || 'Untitled Movie';
   const poster = show?.image?.medium || show?.image?.original || null;
-  const rating = show?.rating?.average ? show.rating.average.toFixed(1) : 'N/A';
+  const rating = typeof show?.rating?.average === 'number' ? show.rating.average.toFixed(1) : 'N/A';
   const releaseYear = show?.premiered ? show.premiered.split('-')[0] : 'Unknown';
 
   return (

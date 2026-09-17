@@ -43,41 +43,53 @@ export default function MovieListingPage({ searchQuery = '', setSearchQuery = ()
     };
   }, [searchQuery]);
 
+  // Reset genre filter when search query changes
+  useEffect(() => {
+    setSelectedGenre('All');
+  }, [searchQuery]);
+
   const [sortBy, setSortBy] = useState('default');
 
   // Extract unique genres for quick filter pills
   const availableGenres = useMemo(() => {
     const genreSet = new Set();
-    movies.forEach(movie => {
-      if (Array.isArray(movie.genres)) {
+    (movies || []).forEach(movie => {
+      if (movie && Array.isArray(movie.genres)) {
         movie.genres.forEach(g => genreSet.add(g));
       }
     });
     return ['All', ...Array.from(genreSet).sort()];
   }, [movies]);
 
+  // Reset selected genre if it's no longer available in the active dataset
+  useEffect(() => {
+    if (selectedGenre !== 'All' && !availableGenres.includes(selectedGenre)) {
+      setSelectedGenre('All');
+    }
+  }, [availableGenres, selectedGenre]);
+
   // Filter and sort movies by selected genre & criteria
   const filteredMovies = useMemo(() => {
-    let result = movies;
+    let result = (movies || []).filter(Boolean);
     if (selectedGenre !== 'All') {
       result = result.filter(movie => 
-        Array.isArray(movie.genres) && movie.genres.includes(selectedGenre)
+        Array.isArray(movie?.genres) && movie.genres.includes(selectedGenre)
       );
     }
 
     return [...result].sort((a, b) => {
       if (sortBy === 'rating') {
-        const ratingA = a.rating?.average || 0;
-        const ratingB = b.rating?.average || 0;
+        const ratingA = typeof a?.rating?.average === 'number' ? a.rating.average : 0;
+        const ratingB = typeof b?.rating?.average === 'number' ? b.rating.average : 0;
         return ratingB - ratingA;
       }
       if (sortBy === 'year') {
-        const yearA = parseInt(a.premiered?.split('-')[0], 10) || 0;
-        const yearB = parseInt(b.premiered?.split('-')[0], 10) || 0;
+        const yearA = parseInt(a?.premiered?.split('-')[0], 10) || 0;
+        const yearB = parseInt(b?.premiered?.split('-')[0], 10) || 0;
         return yearB - yearA;
       }
       if (sortBy === 'name') {
-        return (a.name || '').localeCompare(b.name || '');
+        return (a?.name || '').localeCompare(b?.name || '');
       }
       return 0;
     });
