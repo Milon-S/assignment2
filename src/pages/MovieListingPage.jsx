@@ -1,14 +1,20 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import SearchBar from '../components/SearchBar';
 import MovieCard from '../components/MovieCard';
+import Pagination from '../components/Pagination';
 import { fetchTopShows, searchShows } from '../services/api';
 import { Filter, Frown } from 'lucide-react';
+
+const ITEMS_PER_PAGE = 8;
 
 export default function MovieListingPage({ searchQuery = '', setSearchQuery = () => {}, onSelectMovie }) {
   const [movies, setMovies] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState('All');
+  const [sortBy, setSortBy] = useState('default');
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const gridTopRef = useRef(null);
 
   // Fetch initial top shows or run live search on search query change with debounce
   useEffect(() => {
@@ -25,6 +31,7 @@ export default function MovieListingPage({ searchQuery = '', setSearchQuery = ()
         }
         if (isMounted) {
           setMovies(results || []);
+          setCurrentPage(1);
         }
       } catch (err) {
         if (isMounted) {
@@ -43,12 +50,16 @@ export default function MovieListingPage({ searchQuery = '', setSearchQuery = ()
     };
   }, [searchQuery]);
 
-  // Reset genre filter when search query changes
+  // Reset genre filter & current page when search query changes
   useEffect(() => {
     setSelectedGenre('All');
+    setCurrentPage(1);
   }, [searchQuery]);
 
-  const [sortBy, setSortBy] = useState('default');
+  // Reset page when genre or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedGenre, sortBy]);
 
   // Extract unique genres for quick filter pills
   const availableGenres = useMemo(() => {
@@ -95,8 +106,22 @@ export default function MovieListingPage({ searchQuery = '', setSearchQuery = ()
     });
   }, [movies, selectedGenre, sortBy]);
 
+  // Pagination calculation
+  const totalPages = Math.ceil(filteredMovies.length / ITEMS_PER_PAGE);
+  const paginatedMovies = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredMovies.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredMovies, currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    if (gridTopRef.current) {
+      gridTopRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16" ref={gridTopRef}>
       {/* Live Search Bar */}
       <SearchBar 
         searchQuery={searchQuery}
@@ -137,6 +162,7 @@ export default function MovieListingPage({ searchQuery = '', setSearchQuery = ()
           </h2>
           <span className="text-slate-400 text-xs sm:text-sm">
             {filteredMovies.length} {filteredMovies.length === 1 ? 'title' : 'titles'} found
+            {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
           </span>
         </div>
 
@@ -184,16 +210,25 @@ export default function MovieListingPage({ searchQuery = '', setSearchQuery = ()
       )}
 
       {/* Movie Cards Grid */}
-      {!loading && !error && filteredMovies.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredMovies.map((movie) => (
-            <MovieCard 
-              key={movie.id} 
-              show={movie} 
-              onSelect={onSelectMovie} 
-            />
-          ))}
-        </div>
+      {!loading && !error && paginatedMovies.length > 0 && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {paginatedMovies.map((movie) => (
+              <MovieCard 
+                key={movie.id} 
+                show={movie} 
+                onSelect={onSelectMovie} 
+              />
+            ))}
+          </div>
+
+          {/* Pagination Component */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
       )}
     </div>
   );

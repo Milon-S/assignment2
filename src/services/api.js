@@ -7,7 +7,7 @@ export async function fetchTopShows() {
       throw new Error(`API error: ${response.status}`);
     }
     const data = await response.json();
-    return data.slice(0, 48);
+    return data.slice(0, 120);
   } catch (error) {
     console.error('Error fetching shows:', error);
     throw error;
